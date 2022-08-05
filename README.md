@@ -1,10 +1,7 @@
 # Workshop_Advanced_Physical_Design_Using_OpenLane-Sky130
 
----
 
-# Day 1
-
-# Sky130 Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK
+# Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK
 
 ## SKY130_D1_SK3 - Get familiar to open-source EDA tools
 
