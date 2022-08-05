@@ -176,9 +176,7 @@ We can also review other reports…
 
 ---
 ---
-# Day 2
-
-# Good floorplan vs bad floorplan and introduction to library cells
+# Day 2 - Good floorplan vs bad floorplan and introduction to library cells
 
 ## SKY130_D2_SK1 - Chip Floor planning considerations
 
