@@ -346,3 +346,270 @@ We can also review other reports…
     ![Untitled](Day%202%20226b907d8c7c4964a339e934466876d3/Untitled%2018.png)
     
 7. To quit Magic… File - Quit - Yes
+---
+---
+
+# Day 3 - Design library cell using Magic Layout and ngspice characterization
+
+## SKY130_D3_SK1 - Labs for CMOS inverter ngspice simulations
+
+### SKY_L0 - IO placer revision
+
+ The design we have been working on has equidistant pins.
+
+We can configurate this….
+
+### IO placer :
+
+It’s an Open-source EDA tool which is used to place the IOs around the core.
+
+### How?
+
+1) Go to the next path:
+
+```jsx
+$cd /Desktop/work/tools/openlane_working_dir/openlane/configuration
+
+$less README.md
+```
+
+<aside>
+📌 README file has the description of all the variables
+
+</aside>
+
+2) Go back and open floorplan.tcl
+
+```jsx
+$cd /Desktop/work/tools/openlane_working_dir/openlane/configuration
+
+$less floorplan.tcl
+```
+
+We can see FP_IO_MODE is set to 1…
+
+```jsx
+set ::env(FP_IO_MODE) 1; # 0 matching mode - 1 random equidistant mode
+```
+
+In the terminal in which we launched OpenLane…
+
+```jsx
+$set ::env(FP_IO_MODE) 2
+
+$run_floorplan
+```
+
+In another terminal…
+
+```jsx
+$Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/fecha/results/floorplan
+
+$ls
+
+$magic -T /home/**USER**/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.floorplan.def &
+```
+
+<aside>
+📌 Take care: This process must be before placement. It’s to configure the floorplan in another way.
+
+</aside>
+
+---
+
+### SKY_L5 - Lab steps to git clone vsdstdcelldesign
+
+Go to the next path and type the next command to get the git …
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/
+
+$git clone https://github.com/nickson-jose/vsdstdcelldesign.git
+```
+
+When the process ends…
+
+```jsx
+$ls -ltr
+
+$cd vsdstdcelldesig
+
+$ls -ltr
+```
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled.png)
+
+If we look into these files, we will realize that tech file isn’t in this directory. So, we need to copy it.
+
+Open a new terminal and go to the path in which is the tech file for Magic…
+
+```jsx
+$ cd Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/
+
+$ls -ltr
+```
+
+The tech file is…. “***sky130A.tech***”
+
+For copy the file do this…
+
+```jsx
+$cp sky130A.tech /home/USER/Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesig/
+```
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%201.png)
+
+Now, if we go to the next path Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesig (the path in the first terminal)… We will see the “***sky130A.tech***” file.
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%202.png)
+
+We can open Magic…
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesig
+
+$magic -T sky130A.tech sky130_inv.mag &
+```
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%203.png)
+
+Then, we will see this design in Magic…
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%204.png)
+
+---
+
+## SKY130_D3_SK2 - Inception of Layout Â CMOS fabrication process
+
+### SKY_L8 - Lab introduction to Sky130 basic layers layout and LEF using inverter
+
+LEF is used for placement. Placement doesn’t need information about th logic of the circuit. It just need information about metal layers. 
+
+LEF only shows information about all the metal layers.
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%205.png)
+
+---
+
+### SKY_L9 - Lab steps to create std cell layout and extract spice netlist
+
+A part of an STD Cell of an inverter has been erased…
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%206.png)
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%207.png)
+
+This shows errors in DRC. After set the corresponding layers the DRC is correct and free of errors.
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%208.png)
+
+**How to extract to SPICE…**
+
+In terminal tkcon…
+
+```jsx
+$pwd
+```
+
+ It shows a ***path***…
+
+```jsx
+extract all
+```
+
+The file is… sky130_inv.ext
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%209.png)
+
+In a terminal we go to the ***path*** indicated before…
+
+```jsx
+$cd /Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign
+
+$ls -ltr
+```
+
+There will be the file sky130_inv.ext
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2010.png)
+
+Go back to **tckon terminal** and type: This command will extract all the parasitic capacitances…
+
+```jsx
+$ext2spice cthresh 0 rthresh 0
+$ext2spice
+```
+
+It will show… “exttospice finished”
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2011.png)
+
+In the terminal we opened earlier, we have to go to the ***path:***
+
+```jsx
+$cd /Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign
+
+$ls -ltr
+```
+
+There will be the file sky130_inv.spice
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2012.png)
+
+To see the SPICE…
+
+```jsx
+$vim sky130_inv.spice
+```
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2013.png)
+
+---
+
+## SKY130_D3_SK3 - Sky130 Tech File Labs
+
+### SKY_L1 - Lab steps to create final SPICE deck using Sky130 tech
+
+To see the dimensions of the minimum box size…
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2014.png)
+
+In another terminal, go to…
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesig/libs/
+
+$ls -ltr
+```
+
+It should be contain the next 2 files… “pshort.lib” and “nshort.lib”
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2015.png)
+
+Change multiple parameters in vim file for a transient simulation…
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2016.png)
+
+To run simulation with ngspice… From a terminal… /openlane/vsdstdcelldesign
+
+```jsx
+ngspice sky130_inv.spice
+```
+
+---
+
+### SKY_L2 - Lab steps to characterize inverter using sky130 model files
+
+In ngspice, we could plot output vs time, and plot the input signal…
+
+```jsx
+plot y vs time a
+```
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2017.png)
+
+![Untitled](Day%203%2087604c13907e41d790f08714cdaa8e9d/Untitled%2018.png)
+
+---
+
+---
