@@ -930,5 +930,38 @@ $magic -T /home/**USER**/Desktop/work/tools/openlane_working_dir/pdks/sky130A/li
 
 ---
 ---
+# Day 5
 
+At first, we launch OpenLane.
 
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled.png)
+
+Later, we type:
+
+```jsx
+%echo $::env(CURRENT_DEF)
+```
+
+And to generate the Power Distribution Network:
+
+```jsx
+%gen_pdn
+```
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%201.png)
+
+The result is:
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%202.png)
+
+Later, we must run routing…
+
+```jsx
+%run_routing
+```
+
+And we will obtain as a result…
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%203.png)
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%204.png)
