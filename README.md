@@ -613,3 +613,322 @@ plot y vs time a
 ---
 
 ---
+
+# Day 4 - Pre-layout timing analysis and importance of good clock tree
+
+## SKY130_D4_SK1 - Timing modelling using delay tables
+
+### SKY_L1 - Lab steps to convert grid info to track info
+
+1. Open sky130_inv.mag
+    
+    ```jsx
+    $cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesig
+    
+    $magic -T sky130A.tech sky130_inv.mag &
+    ```
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled.png)
+    
+    For PnR we don’t need all the information shown in magic. For example, PnR doesn’t need information about the logic. The only information we will require is: 
+    
+    - PR Boundary
+    - Power and Ground
+    - Input and Output
+    
+    Go to the next path to see information about tracks:
+    
+    ```jsx
+    $cd Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/openlane/sky130_fd_sc_hd/
+    
+    $less tracks.info
+    ```
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%201.png)
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%202.png)
+    
+    This file will show us the tracks for every metal layer. For example, the pitch for horizontal tracks of “lil” is 0.46, and for vertical tracks the pitch is 0.34
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%203.png)
+    
+    We can activate a certain grid of tracks for metal 1 as .
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%204.png)
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%205.png)
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%206.png)
+    
+    If input and output pins are in the intersection, we are guaranteeing that the PnR can reach them.
+    
+
+---
+
+### SKY_L2 - Lab steps to convert magic layout to std cell LEF
+
+Define a part of a layer as a port:
+
+1. Select the area where you want to define a port
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%207.png)
+    
+2. Go to Text…
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%208.png)
+    
+3. Define port…
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%209.png)
+    
+
+Now, we are going to export LEF file…
+
+1. In tkcon terminal… Save the STD Cell with a name of your preference
+2. Exit magic
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2010.png)
+    
+3. In a terminal go to the next path, and we should see the file we saved.
+    
+    ```jsx
+    $cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesig
+    
+    $ls -ltr 
+    
+    $magic -T sky130A.tech sky130_vsdinv.mag &
+    ```
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2011.png)
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2012.png)
+    
+4. In tkcon terminal
+    
+    ```jsx
+    $lef write
+    ```
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2013.png)
+    
+5. In the terminal in which we opened Magic…
+    
+    ```jsx
+    $ls -ltr
+    
+    $less sky130_vsdinv.lef
+    ```
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2014.png)
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2015.png)
+    
+
+---
+
+### SKY_L3 - Introduction to timing libs and steps to include new cell in synthesis
+
+Open another terminal, and type:
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign/
+
+$ls -ltr
+
+$cp sky130_vsdinv.lef /home/USER/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src/
+```
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2016.png)
+
+In another terminal, go to the path and copy the file indicated below:
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign/libs/
+
+$ls
+
+$less sky130_fd_sc_hd__typical.lib
+
+$less sky130_fd_sc_hd__slow.lib
+
+$less sky130_fd_sc_hd__fast.lib
+
+$cp sky130_fd_sc_hd__* /home/USER/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src/
+```
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2017.png)
+
+Later go to the path shown earlier and see the new files copied.
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2018.png)
+
+At first, we configure the config.tcl file.
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2019.png)
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2020.png)
+
+Launch OpenLane…
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/
+
+$docker
+
+$./flow.tcl -interactive
+
+$package require openlane 0.9
+
+$prep -design picorv32a -tag latest_date_file -overwrite
+
+...
+
+$set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+...
+
+$add_lefs -src $lefs
+...
+
+$run_synthesis
+```
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2021.png)
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2022.png)
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2023.png)
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2024.png)
+
+---
+
+### SKY_L7 - Lab steps to configure synthesis settings to fix slack and include vsdinv
+
+Continue…
+
+In the terminal in which we launched OpenLane, at the end… slack (VIOLATED)
+
+<aside>
+📌 Take care:
+
+wns → Max. slack
+
+tns → total net slack
+
+</aside>
+
+Go to the next path in another terminal:
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/configuration
+
+$less README.md
+```
+
+You should see “SYNTH_STRATEGY” for synthesis.
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2025.png)
+
+Search for the chip area in synthesis results. You should also search for tns and wns.
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2026.png)
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2027.png)
+
+**FIXING SLACK VIOLATIONS:**
+
+In the terminal in which we launched OpenLane…
+
+```jsx
+%echo $::env(SYNTH_STRATEGY)
+
+%set ::env(SYNTH_STRATEGY) 1
+
+%echo $::env(SYNTH_BUFFERING)
+
+%echo $::env(SYNTH_SIZING)
+
+%set ::env(SYNTH_SIZING) 1
+
+%echo $::env(SYNTH_DRIVING_CELL)
+```
+
+The values should be…
+
+SYNTH_STRATEGY = 1
+
+SYNTH_BUFFERING = 1
+
+SYNTH_SIZING = 1
+
+SYNTH_DRIVING_CELL = sky130_fd_sc_hd__inv_8
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2028.png)
+
+After running synthesis, we get…
+
+```jsx
+run_synthesis
+```
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2029.png)
+
+Now…Floorplan & Placement:
+
+```jsx
+$init_floorplan
+
+$place_io
+
+$global_placement_or
+
+$detailed_placement
+
+$tap_decap_or
+
+$detailed_placement
+```
+
+1. init_floorplan
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2030.png)
+    
+2. place_io
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2031.png)
+    
+3. global_placement_or
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2032.png)
+    
+4. detailed_placement
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2033.png)
+    
+5. tap_decap_or
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2034.png)
+    
+6. detailed_placement
+    
+    ![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2035.png)
+    
+
+Go to the path:
+
+```jsx
+$cd Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/latest_date_file/results/placement/
+
+$ls
+
+$magic -T /home/**USER**/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.placement.def &
+```
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2036.png)
+
+![Untitled](Day%204%200d0f70076f0e45c8947758a8db51a6ea/Untitled%2037.png)
+
+---
+---
+
+
