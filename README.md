@@ -965,3 +965,21 @@ And we will obtain as a result…
 ![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%203.png)
 
 ![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%204.png)
+
+To see the result in Magic..
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%205.png)
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%206.png)
+
+Zoom in:
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%207.png)
+
+When we type “expand” in tkcon terminal…
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%208.png)
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%209.png)
+
+![Untitled](Day%205%209400d285e3574d71b937d1a506516dc4/Untitled%2010.png)
