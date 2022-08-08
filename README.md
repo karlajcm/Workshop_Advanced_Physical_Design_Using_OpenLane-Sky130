@@ -930,7 +930,7 @@ $magic -T /home/**USER**/Desktop/work/tools/openlane_working_dir/pdks/sky130A/li
 
 ---
 ---
-# Day 5
+# Day 5 - Final steps for RTL2GDS using tritonRoute and openSTA
 
 At first, we launch OpenLane.
 
